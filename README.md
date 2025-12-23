@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Code Historian Logo](media/icon.png)
+<img src="https://raw.githubusercontent.com/KirtiJha/code-historian/main/media/icon.png" alt="Code Historian Logo" width="128" height="128">
 
 **AI-Powered Code History Tracking with RAG-Based Natural Language Search**
 
