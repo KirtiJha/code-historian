@@ -1,0 +1,515 @@
+{
+  "name": "code-historian",
+  "displayName": "Code Historian",
+  "description": "AI-powered code history tracking with RAG-based natural language search and restoration",
+  "version": "1.0.0",
+  "publisher": "code-historian",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/code-historian/code-historian"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "history",
+    "rag",
+    "ai",
+    "code-search",
+    "version-control",
+    "llm",
+    "embeddings"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "icon": "media/icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeHistorian.openTimeline",
+        "title": "Open Timeline",
+        "category": "Code Historian",
+        "icon": "$(history)"
+      },
+      {
+        "command": "codeHistorian.searchHistory",
+        "title": "Search History",
+        "category": "Code Historian",
+        "icon": "$(search)"
+      },
+      {
+        "command": "codeHistorian.openSettings",
+        "title": "Open Settings",
+        "category": "Code Historian",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "codeHistorian.pauseCapture",
+        "title": "Pause Change Capture",
+        "category": "Code Historian",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "codeHistorian.resumeCapture",
+        "title": "Resume Change Capture",
+        "category": "Code Historian",
+        "icon": "$(play)"
+      },
+      {
+        "command": "codeHistorian.clearHistory",
+        "title": "Clear All History",
+        "category": "Code Historian",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "codeHistorian.exportHistory",
+        "title": "Export History",
+        "category": "Code Historian",
+        "icon": "$(export)"
+      },
+      {
+        "command": "codeHistorian.showFileHistory",
+        "title": "Show File History",
+        "category": "Code Historian",
+        "icon": "$(git-commit)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeHistorian",
+          "title": "Code Historian",
+          "icon": "media/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeHistorian": [
+        {
+          "type": "webview",
+          "id": "codeHistorian.timeline",
+          "name": "Timeline"
+        },
+        {
+          "id": "codeHistorian.recentChanges",
+          "name": "Recent Changes"
+        },
+        {
+          "id": "codeHistorian.sessions",
+          "name": "Sessions"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeHistorian.searchHistory",
+          "when": "view == codeHistorian.timeline",
+          "group": "navigation"
+        },
+        {
+          "command": "codeHistorian.openSettings",
+          "when": "view == codeHistorian.timeline",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "codeHistorian.showFileHistory",
+          "group": "codeHistorian",
+          "when": "editorTextFocus"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "codeHistorian.showFileHistory",
+          "group": "navigation",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Historian",
+      "properties": {
+        "codeHistorian.capture.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic change capture"
+        },
+        "codeHistorian.capture.debounceMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 500,
+          "maximum": 30000,
+          "description": "Debounce interval for change capture in milliseconds"
+        },
+        "codeHistorian.capture.maxHistoryDays": {
+          "type": "number",
+          "default": 90,
+          "minimum": 7,
+          "maximum": 365,
+          "description": "Maximum number of days to retain history"
+        },
+        "codeHistorian.capture.excludePatterns": {
+          "type": "array",
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/*.min.js",
+            "**/*.min.css",
+            "**/package-lock.json",
+            "**/yarn.lock",
+            "**/pnpm-lock.yaml",
+            "**/.env*",
+            "**/*.log"
+          ],
+          "description": "Glob patterns for files to exclude from capture"
+        },
+        "codeHistorian.capture.includePatterns": {
+          "type": "array",
+          "default": [],
+          "description": "Glob patterns for files to include (empty means all)"
+        },
+        "codeHistorian.capture.maxFileSizeKB": {
+          "type": "number",
+          "default": 1024,
+          "minimum": 64,
+          "maximum": 10240,
+          "description": "Maximum file size to capture in KB"
+        },
+        "codeHistorian.embedding.provider": {
+          "type": "string",
+          "enum": [
+            "ollama",
+            "huggingface",
+            "openai"
+          ],
+          "default": "ollama",
+          "description": "Embedding model provider",
+          "enumDescriptions": [
+            "Local Ollama server (no API key required)",
+            "HuggingFace Inference API (free tier available)",
+            "OpenAI API (requires API key)"
+          ]
+        },
+        "codeHistorian.embedding.model": {
+          "type": "string",
+          "default": "nomic-embed-text",
+          "description": "Embedding model name (depends on provider)"
+        },
+        "codeHistorian.embedding.dimensions": {
+          "type": "number",
+          "default": 768,
+          "description": "Embedding vector dimensions (auto-configured based on model)"
+        },
+        "codeHistorian.embedding.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama API endpoint URL"
+        },
+        "codeHistorian.embedding.huggingfaceApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "HuggingFace API key (get free key at huggingface.co/settings/tokens)"
+        },
+        "codeHistorian.embedding.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key for embeddings"
+        },
+        "codeHistorian.llm.provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic",
+            "ollama",
+            "google",
+            "azure",
+            "groq",
+            "mistral",
+            "cohere"
+          ],
+          "default": "ollama",
+          "description": "LLM provider for chat"
+        },
+        "codeHistorian.llm.model": {
+          "type": "string",
+          "default": "llama3.2",
+          "description": "LLM model name"
+        },
+        "codeHistorian.llm.temperature": {
+          "type": "number",
+          "default": 0.3,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "LLM temperature for responses"
+        },
+        "codeHistorian.llm.maxTokens": {
+          "type": "number",
+          "default": 4096,
+          "minimum": 256,
+          "maximum": 128000,
+          "description": "Maximum tokens for LLM responses"
+        },
+        "codeHistorian.llm.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key"
+        },
+        "codeHistorian.llm.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key"
+        },
+        "codeHistorian.llm.googleApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Google AI API key"
+        },
+        "codeHistorian.llm.azureEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Azure OpenAI endpoint"
+        },
+        "codeHistorian.llm.azureApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Azure OpenAI API key"
+        },
+        "codeHistorian.llm.azureDeployment": {
+          "type": "string",
+          "default": "",
+          "description": "Azure OpenAI deployment name"
+        },
+        "codeHistorian.llm.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Groq API key"
+        },
+        "codeHistorian.llm.mistralApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Mistral API key"
+        },
+        "codeHistorian.llm.cohereApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Cohere API key"
+        },
+        "codeHistorian.llm.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama API endpoint for LLM"
+        },
+        "codeHistorian.search.vectorWeight": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Weight for vector similarity in hybrid search"
+        },
+        "codeHistorian.search.keywordWeight": {
+          "type": "number",
+          "default": 0.3,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Weight for keyword matching in hybrid search"
+        },
+        "codeHistorian.search.maxResults": {
+          "type": "number",
+          "default": 20,
+          "minimum": 5,
+          "maximum": 100,
+          "description": "Maximum number of search results"
+        },
+        "codeHistorian.search.rerankTopK": {
+          "type": "number",
+          "default": 50,
+          "minimum": 10,
+          "maximum": 200,
+          "description": "Number of candidates for reranking"
+        },
+        "codeHistorian.storage.path": {
+          "type": "string",
+          "default": "",
+          "description": "Custom storage path (empty for default)"
+        },
+        "codeHistorian.storage.maxSizeMB": {
+          "type": "number",
+          "default": 1024,
+          "minimum": 100,
+          "maximum": 10240,
+          "description": "Maximum storage size in MB"
+        },
+        "codeHistorian.ui.theme": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "default": "auto",
+          "description": "UI theme preference"
+        },
+        "codeHistorian.ui.compactMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use compact UI mode"
+        },
+        "codeHistorian.ui.showInlineHistory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline history decorations in editor"
+        }
+      }
+    },
+    "chatParticipants": [
+      {
+        "id": "codeHistorian.chat",
+        "name": "historian",
+        "fullName": "Code Historian",
+        "description": "Search and explore your code history using natural language",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "search",
+            "description": "Search code history"
+          },
+          {
+            "name": "restore",
+            "description": "Restore code from history"
+          },
+          {
+            "name": "compare",
+            "description": "Compare code versions"
+          },
+          {
+            "name": "explain",
+            "description": "Explain code changes"
+          },
+          {
+            "name": "timeline",
+            "description": "Show timeline for file or symbol"
+          },
+          {
+            "name": "similar",
+            "description": "Find similar changes"
+          },
+          {
+            "name": "patterns",
+            "description": "Analyze change patterns"
+          }
+        ]
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "codeHistorian.welcome",
+        "title": "Get Started with Code Historian",
+        "description": "Learn how to use Code Historian to track, search, and restore your code changes",
+        "steps": [
+          {
+            "id": "configure",
+            "title": "Configure Your LLM",
+            "description": "Set up your preferred LLM provider for the best experience",
+            "media": {
+              "markdown": "media/walkthrough/configure.md"
+            },
+            "completionEvents": [
+              "onSettingChanged:codeHistorian.llm.provider"
+            ]
+          },
+          {
+            "id": "capture",
+            "title": "Start Capturing Changes",
+            "description": "Code Historian automatically captures your changes as you code",
+            "media": {
+              "markdown": "media/walkthrough/capture.md"
+            }
+          },
+          {
+            "id": "search",
+            "title": "Search Your History",
+            "description": "Use natural language to find any change you've made",
+            "media": {
+              "markdown": "media/walkthrough/search.md"
+            },
+            "completionEvents": [
+              "onCommand:codeHistorian.searchHistory"
+            ]
+          },
+          {
+            "id": "chat",
+            "title": "Chat with Your History",
+            "description": "Use @historian in the chat to explore your code history",
+            "media": {
+              "markdown": "media/walkthrough/chat.md"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "npm run build:extension && npm run build:webview && npm run build:css",
+    "build:extension": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --external:@anthropic-ai/sdk --external:@google/generative-ai --external:vectordb --external:@lancedb/lancedb --external:apache-arrow --format=cjs --platform=node --target=node18 --sourcemap",
+    "build:webview": "esbuild ./src/webview/ui/App.tsx --bundle --outfile=dist/webview.js --format=iife --platform=browser --target=es2020 --loader:.css=empty --define:process.env.NODE_ENV=\\\"production\\\" --jsx=automatic",
+    "build:css": "cp ./src/webview/ui/styles.css ./dist/webview.css",
+    "watch": "npm run build:css && concurrently \"npm run watch:extension\" \"npm run watch:webview\" \"npm run watch:css\"",
+    "watch:extension": "npm run build:extension -- --watch",
+    "watch:webview": "npm run build:webview -- --watch",
+    "watch:css": "chokidar \"./src/webview/ui/styles.css\" -c \"cp ./src/webview/ui/styles.css ./dist/webview.css\" --initial",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "clean": "rm -rf dist node_modules"
+  },
+  "devDependencies": {
+    "@types/diff": "^6.0.0",
+    "@types/node": "^20.17.9",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/uuid": "^10.0.0",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vscode/codicons": "^0.0.36",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@google/generative-ai": "^0.21.0",
+    "@lancedb/lancedb": "^0.13.0",
+    "apache-arrow": "^17.0.0",
+    "diff": "^7.0.0",
+    "minimatch": "^10.0.1",
+    "openai": "^4.73.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sql.js": "^1.11.0",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
+  }
+}
