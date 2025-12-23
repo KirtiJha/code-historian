@@ -1,52 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0f3460;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#e94560;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="timeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#00ff88;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <!-- Background -->
-  <rect width="128" height="128" rx="24" fill="url(#bgGrad)" />
-
-  <!-- Clock circle outer -->
-  <circle cx="64" cy="64" r="42" fill="none" stroke="url(#accentGrad)" stroke-width="4"
-    opacity="0.3" />
-
-  <!-- Clock circle inner -->
-  <circle cx="64" cy="64" r="36" fill="none" stroke="url(#timeGrad)" stroke-width="3" />
-
-  <!-- Timeline dots -->
-  <circle cx="64" cy="28" r="5" fill="#00d9ff" />
-  <circle cx="92" cy="52" r="4" fill="#00ff88" />
-  <circle cx="88" cy="82" r="3" fill="#ffd700" />
-
-  <!-- Clock hands -->
-  <line x1="64" y1="64" x2="64" y2="38" stroke="url(#timeGrad)" stroke-width="4"
-    stroke-linecap="round" />
-  <line x1="64" y1="64" x2="84" y2="54" stroke="url(#timeGrad)" stroke-width="3"
-    stroke-linecap="round" />
-
+  <rect width="128" height="128" rx="20" fill="#1a1a2e"/>
+  
+  <!-- Clock face -->
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#00d4ff" stroke-width="4"/>
+  
+  <!-- Clock tick marks -->
+  <line x1="64" y1="28" x2="64" y2="34" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="64" y1="94" x2="64" y2="100" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="28" y1="64" x2="34" y2="64" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="94" y1="64" x2="100" y2="64" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Clock hour hand -->
+  <line x1="64" y1="64" x2="64" y2="38" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Clock minute hand -->
+  <line x1="64" y1="64" x2="84" y2="48" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  
   <!-- Center dot -->
-  <circle cx="64" cy="64" r="6" fill="url(#timeGrad)" />
-  <circle cx="64" cy="64" r="3" fill="#1a1a2e" />
-
-  <!-- Code brackets -->
-  <path d="M28 48 L18 64 L28 80" stroke="#e94560" stroke-width="4" stroke-linecap="round"
-    stroke-linejoin="round" fill="none" />
-  <path d="M100 48 L110 64 L100 80" stroke="#e94560" stroke-width="4" stroke-linecap="round"
-    stroke-linejoin="round" fill="none" />
-
-  <!-- Rewind arrows -->
-  <path d="M38 100 Q 28 90 38 80" stroke="#00d9ff" stroke-width="2" stroke-linecap="round"
-    fill="none" opacity="0.6" />
-  <polygon points="36,80 42,76 42,84" fill="#00d9ff" opacity="0.6" />
+  <circle cx="64" cy="64" r="5" fill="#00d4ff"/>
+  
+  <!-- Rewind arrow arc -->
+  <path d="M 38 34 A 36 36 0 0 1 90 34" fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round"/>
+  <!-- Arrow head - smaller and cleaner -->
+  <polygon points="34,30 44,38 38,26" fill="#00ff88"/>
+  
+  <!-- Left code bracket < - smaller -->
+  <path d="M 20 54 L 10 64 L 20 74" fill="none" stroke="#00ff88" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Right code bracket > - smaller -->
+  <path d="M 108 54 L 118 64 L 108 74" fill="none" stroke="#00ff88" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

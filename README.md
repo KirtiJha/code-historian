@@ -6,10 +6,11 @@
 
 **AI-Powered Code History Tracking with RAG-Based Natural Language Search**
 
-[![VS Code](https://img.shields.io/badge/VS%20Code-1.95+-blue?logo=visualstudiocode)](https://code.visualstudio.com/)
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/KirtiNathJha.code-historian?label=VS%20Code%20Marketplace&logo=visualstudiocode&color=blue)](https://marketplace.visualstudio.com/items?itemName=KirtiNathJha.code-historian)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/KirtiNathJha.code-historian?logo=visualstudiocode&color=brightgreen)](https://marketplace.visualstudio.com/items?itemName=KirtiNathJha.code-historian)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/KirtiNathJha.code-historian?logo=visualstudiocode&color=orange)](https://marketplace.visualstudio.com/items?itemName=KirtiNathJha.code-historian)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=nodedotjs)](https://nodejs.org/)
 
 *Never lose track of your code changes again. Search, explore, and restore any version with natural language.*
 
@@ -59,6 +60,15 @@
 
 ## 🚀 Installation
 
+### VS Code Marketplace (Recommended)
+
+1. Open VS Code
+2. Go to Extensions (`Cmd/Ctrl + Shift + X`)
+3. Search for **"Code Historian"**
+4. Click **Install**
+
+Or install directly: **[Install from Marketplace](https://marketplace.visualstudio.com/items?itemName=KirtiNathJha.code-historian)**
+
 ### From Source
 
 ```bash
@@ -69,10 +79,6 @@ npm run build
 ```
 
 Then press **F5** in VS Code to launch the extension in development mode.
-
-### VS Code Marketplace
-
-Coming soon!
 
 ---
 

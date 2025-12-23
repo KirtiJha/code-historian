@@ -3,11 +3,11 @@
   "displayName": "Code Historian",
   "description": "AI-powered code history tracking with RAG-based natural language search and restoration",
   "version": "1.0.0",
-  "publisher": "code-historian",
+  "publisher": "KirtiNathJha",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/code-historian/code-historian"
+    "url": "https://github.com/KirtiJha/code-historian"
   },
   "engines": {
     "vscode": "^1.95.0"
